@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "ai-translate",
+  "name": "translate",
   "main": "src/index.js",
   "compatibility_date": "2026-04-13",
   "observability": {
