@@ -4,7 +4,7 @@
   "description": "考研专用 AI 翻译工具，基于阿里千问大模型，部署于 Cloudflare Workers",
   "main": "src/index.js",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "node scripts/dev.js",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail"
   },

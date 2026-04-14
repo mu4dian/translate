@@ -1137,6 +1137,14 @@ renderHistory();
 }
 
 /* ── Stream handler ── */
+function getQianwenApiKey(env) {
+  // Prefer system environment variable in local development.
+  const sysKey = typeof process !== 'undefined' && process && process.env
+    ? process.env.QIANWEN_API_KEY
+    : '';
+  return (sysKey && sysKey.trim()) || env.QIANWEN_API_KEY || '';
+}
+
 async function handleStream(request, env) {
   let body;
   try {
@@ -1153,8 +1161,11 @@ async function handleStream(request, env) {
   if (text.length > 2000) {
     return Response.json({ error: '文本过长，请控制在 1000 字符以内' }, { status: 400 });
   }
-  if (!env.QIANWEN_API_KEY) {
-    return Response.json({ error: 'API Key 未配置，请运行 wrangler secret put QIANWEN_API_KEY' }, { status: 500 });
+  const apiKey = getQianwenApiKey(env);
+  if (!apiKey) {
+    return Response.json({
+      error: 'API Key 未配置，请先设置系统环境变量 QIANWEN_API_KEY 或运行 wrangler secret put QIANWEN_API_KEY',
+    }, { status: 500 });
   }
 
   const VALID_MODELS = ['qwen-turbo', 'qwen-plus', 'qwen-max', 'qwen-max-longcontext'];
@@ -1164,7 +1175,7 @@ async function handleStream(request, env) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + env.QIANWEN_API_KEY,
+      'Authorization': 'Bearer ' + apiKey,
     },
     body: JSON.stringify({
       model: safeModel,
